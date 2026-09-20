@@ -113,5 +113,5 @@
 	   "fake-systemctl"
 	   (with-extensions
 	    (list shepherd)
-	    #~(#$@%fake-systemctl-src))))))))))
+	    #~(begin #$@%fake-systemctl-src))))))))))
 	  
