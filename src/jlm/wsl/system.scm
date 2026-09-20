@@ -9,6 +9,7 @@
   #:use-module (gnu packages bash)
   #:use-module (guix modules)
   #:use-module (guix build syscalls)
+  #:use-module (guix gexp)
   #:use-module (ice-9 match))
 
 (define set-mount-may-fail
