@@ -28,6 +28,11 @@
     (('jlm _ ...) #t)
     (_ #f)))
 
+(define %fake-systemctl-src
+  (call-with-input-file
+      (string-append (dirname current-filename) "../../../scripts/fake-systemctl.scm")
+    read-all-forms))
+
 ;; must call this in reconfigure script
 ;; there has to be a better way to handle this
 (define-public (fix-control-groups-fs)
@@ -99,6 +104,7 @@
 	("/usr/bin/systemctl"
 	 ,(program-file
 	   "fake-systemctl"
-	   (with-extensions (list shepherd)
-	   #~(primitive-load #$(local-file "../../../scripts/fake-systemctl.scm")))))))))))
+	   (with-extensions
+	    (list shepherd)
+	    #~(#$@%fake-systemctl-src))))))))))
 	  
