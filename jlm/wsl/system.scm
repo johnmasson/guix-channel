@@ -1,4 +1,4 @@
-(define-module (wsl system)
+(define-module (jlm wsl system)
   #:use-module (gnu)
   #:use-module (gnu services base)
   #:use-module (gnu services desktop)
@@ -8,6 +8,7 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages bash)
   #:use-module (guix modules)
+  #:use-module (guix build syscalls)
   #:use-module (ice-9 match))
 
 (define set-mount-may-fail

@@ -3,7 +3,9 @@
   #:use-module (guix git-download)
   #:use-module (guix build-system guile)
   #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (gnu packages guile))
+  #:use-module (gnu packages guile)
+  #:use-module (gnu packages package-management)
+  #:use-module (gnu packages admin))
 
 (define vcs-file?
   (or (git-predicate (dirname (current-source-directory)))
@@ -20,15 +22,16 @@
 
    (source (local-file "../" "wsl-src"
 		       #:select? vcs-file?
-		       #:recursive #t))
+		       #:recursive? #t))
 
     (native-search-paths
-    (list (search-path-specification
-           (variable "GUILE_LOAD_PATH")
-           (files '("share/guile/site/3.0")))
-	  (search-path-specification
-           (variable "GUILE_LOAD_COMPILED_PATH")
-           (files '("lib/guile/3.0/site-ccache")))))   
+     (list (search-path-specification
+            (variable "GUILE_LOAD_PATH")
+            (files '("share/guile/site/3.0")))
+	   (search-path-specification
+            (variable "GUILE_LOAD_COMPILED_PATH")
+            (files '("lib/guile/3.0/site-ccache")))))
+    
    (build-system guile-build-system)
    (native-inputs (list guile-3.0-latest))
    (inputs (list guix shepherd))))

@@ -1,4 +1,4 @@
-(define-module (wsl services)
+(define-module (jlm wsl services)
   #:use-module (shepherd comm)
   #:use-module (ice-9 match)
   #:use-module (ice-9 pretty-print)

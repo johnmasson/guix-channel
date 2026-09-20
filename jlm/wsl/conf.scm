@@ -1,4 +1,4 @@
-(define-module (wsl conf)
+(define-module (jlm wsl conf)
   #:use-module (gnu services configuration)
   #:use-module (guix gexp)
   #:export (wsl-conf
