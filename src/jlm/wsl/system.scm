@@ -99,7 +99,5 @@
 	("/usr/bin/systemctl"
 	 ,(program-file
 	   "fake-systemctl" 
-	   (primitive-load #$(local-file "../../../scripts/fake-systemctl.scm"))))))))))
-	   ;; (with-imported-modules
-	    ;;  (source-module-closure '((jlm wsl services)) #:select? relevant-module?)
-	    ;;  (program-file "fake-systemctl" #~((@ (jlm wsl services) systemctl-main) (command-line)))))))))))
+	   #~(primitive-load #$(local-file "../../../scripts/fake-systemctl.scm"))))))))))
+	  
