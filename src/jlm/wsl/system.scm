@@ -28,6 +28,13 @@
     (('jlm _ ...) #t)
     (_ #f)))
 
+(define (read-all-forms port)
+  (let loop ((forms '()))
+    (let ((form (read port)))
+      (if (eof-object? form)
+          (reverse forms)
+          (loop (cons form forms))))))
+
 (define %fake-systemctl-src
   (call-with-input-file
       (string-append (dirname current-filename) "../../../scripts/fake-systemctl.scm")
