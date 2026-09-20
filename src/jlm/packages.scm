@@ -4,11 +4,10 @@
   #:use-module (guix build-system guile)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages guile)
-  #:use-module (gnu packages package-management)
-  #:use-module (gnu packages admin))
+  #:use-module (gnu packages package-management))
 
 (define vcs-file?
-  (or (git-predicate (dirname (current-source-directory)))
+  (or (git-predicate (dirname (dirname (current-source-directory))))
       (const #t)))
 
 (define-public wsl
@@ -34,6 +33,6 @@
     
    (build-system guile-build-system)
    (native-inputs (list guile-3.0-latest))
-   (inputs (list guix shepherd))))
+   (inputs (list guix))))
 
 	   

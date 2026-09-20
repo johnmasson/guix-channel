@@ -1,25 +1,7 @@
-(define-module (jlm wsl services)
-  #:use-module (shepherd comm)
-  #:use-module (ice-9 match)
-  #:use-module (ice-9 pretty-print)
-  #:use-module (ice-9 regex)
-  #:export (systemctl-main))
-
-(define (service-prop name svc)
-  (cadr (assoc name (cdr svc))))
-
-(define (service-status svc)
-  (cond
-   ((or (and (service-prop 'one-shot? svc)
-	     (eq? 'stopped (service-prop 'status svc)))
-	(eq? 'running (service-prop 'status svc)))
-    'good)
-   ((and (not (service-prop 'one-shot? svc))
-	 (eq? 'stopped (service-prop 'status svc)))
-    'bad)
-   ((eq? 'starting (service-prop 'status svc))
-    'wait)
-   (#t 'unknown)))
+(use-modules
+ (shepherd comm)
+ (jlm wsl services)
+ (ice-9 match))
 
 (define (try-open-connection)
   (catch 'system-error
@@ -49,28 +31,7 @@
     (if con
 	(write-command cmd con))))
 
-
-(define (get-services-status services)
-  (map (lambda (svc)
-	 (list (service-prop 'provides svc)
-	       (service-prop 'status svc)
-	       (service-prop 'one-shot? svc)
-	       (service-status svc)))
-       services))
-
 (define (system-status)
-  (define (services-status services)
-    (if (null? services)
-	'good
-	(match (service-status (car services))
-	  ('good (services-status (cdr services)))
-	  ('wait 'wait)
-	  ((or 'bad 'unknown)
-	   (let ((rest-status (services-status (cdr services))))
-	     (if (eq? 'wait rest-status)
-		 'wait
-		 'bad))))))
-
   (if (not (file-exists? "/var/run/shepherd/socket"))
       'wait
       (let ((services (query-services)))
@@ -79,6 +40,7 @@
 	      (format (current-error-port) "~a\n" (get-services-status services))
 	      (services-status services))
 	    'wait))))
+
 
 (define (systemctl-main args)
   ;;  (pretty-print args)
@@ -118,3 +80,5 @@
 	(_
 	 (format #t "command not supported\n")
 	 (exit #f)))))
+
+(systemctl-main (command-line))

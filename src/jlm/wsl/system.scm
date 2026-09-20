@@ -95,7 +95,7 @@
         ("/usr/bin/env" ,(file-append coreutils "/bin/env"))
 	("/sbin/ldconfig" ,(file-append glibc "/sbin/ldconfig"))
 	("/bin/login" ,(file-append shadow "/bin/login"))
-	("/usr/bin/systemctl"
-	   ,(with-imported-modules
-	     (source-module-closure '((jlm wsl services)) #:select? relevant-module?)
-	     (program-file "fake-systemctl" #~((@ (jlm wsl services) systemctl-main) (command-line)))))))))))
+	("/usr/bin/systemctl" ,(local-file "../../../scripts/fake-systemctl.scm"))))))))
+	   ,;; (with-imported-modules
+	    ;;  (source-module-closure '((jlm wsl services)) #:select? relevant-module?)
+	    ;;  (program-file "fake-systemctl" #~((@ (jlm wsl services) systemctl-main) (command-line)))))))))))
