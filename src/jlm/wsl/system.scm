@@ -98,6 +98,7 @@
 	("/bin/login" ,(file-append shadow "/bin/login"))
 	("/usr/bin/systemctl"
 	 ,(program-file
-	   "fake-systemctl" 
-	   #~(primitive-load #$(local-file "../../../scripts/fake-systemctl.scm"))))))))))
+	   "fake-systemctl"
+	   (with-extensions (list shepherd)
+	   #~(primitive-load #$(local-file "../../../scripts/fake-systemctl.scm")))))))))))
 	  
