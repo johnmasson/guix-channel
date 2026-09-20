@@ -37,7 +37,7 @@
 
 (define %fake-systemctl-src
   (call-with-input-file
-      (string-append (dirname current-filename) "../../../scripts/fake-systemctl.scm")
+      (string-append (dirname (search-path %load-path "jlm/wsl/system.scm")) "/../../../scripts/fake-systemctl.scm")
     read-all-forms))
 
 ;; must call this in reconfigure script
