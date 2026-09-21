@@ -35,28 +35,22 @@
           (reverse forms)
           (loop (cons form forms))))))
 
+(define (project-path file-path)
+  (let ((src-dir (dirname (search-path %load-path "jlm/wsl/system.scm"))))
+    (string-append src-dir "/../../../" file-path)))
+
 (define %fake-systemctl-src
-  (call-with-input-file
-      (string-append (dirname (search-path %load-path "jlm/wsl/system.scm")) "/../../../scripts/fake-systemctl.scm")
+  (call-with-input-file (project-path "scripts/fake-systemctl.scm")
+    read-all-forms))
+
+(define %sbin-init-src
+  (call-with-input-file (project-path "scripts/sbin-init.scm")
     read-all-forms))
 
 ;; must call this in reconfigure script
 ;; there has to be a better way to handle this
 (define-public (fix-control-groups-fs)
   (set-mount-may-fail (car %control-groups) #t))
-
-;; startup guix system from WSL boot command
-(define (wsl-system-boot-cmd)
-  (let* ((system-generation (readlink "/var/guix/profiles/system"))
-	 (system (readlink (string-append
-			    (if (absolute-file-name? system-generation)
-				""
-				"/var/guix/profiles/")
-			    system-generation))))
-    (setenv "GUIX_NEW_SYSTEM" system)
-    (mount #f "/run" #f MS_REMOUNT #:update-mtab? #f)
-    (execl "/var/guix/profiles/system/profile/bin/guile" "guile" "--no-auto-compile"
-	   (string-append system "/boot"))))
 
 (define-public wsl-operating-system
   (operating-system
@@ -67,8 +61,6 @@
    ;; (keyboard-layout (keyboard-layout "us" "altgr-intl"))
    ;; (timezone "Europe/London")
 
-   ;(packages (cons wsl-utils %base-packages))
-   
    (essential-services
     (modify-services
      (operating-system-default-essential-services this-operating-system)
@@ -122,5 +114,9 @@
 	   "fake-systemctl"
 	   (with-extensions
 	    (list shepherd)
-	    #~(begin #$@%fake-systemctl-src))))))))))
+	    #~(begin #$@%fake-systemctl-src))))
+	("/sbin/init"
+	 ,(program-file
+	   "sbin-init"
+	   #~(begin #$@%sbin-init-src)))))))))
 	  
