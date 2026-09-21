@@ -100,7 +100,15 @@
      ;; instances to run properly
      (service elogind-service-type)
      (service login-service-type)
-     
+
+     (simple-service
+      'remount-run 
+      boot-service-type
+      (list
+       (with-imported-modules
+	'((guix build syscalls))
+	#~(mount #f "/run" #f MS_REMOUNT #:update-mtab? #f))))
+      
      (service
       special-files-service-type
       `(;("/bin/sh" ,(file-append bash "/bin/bash"))
