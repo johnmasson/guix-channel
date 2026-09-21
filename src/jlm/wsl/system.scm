@@ -106,7 +106,9 @@
       boot-service-type
       (with-imported-modules
        '((guix build syscalls))
-       #~(mount #f "/run" #f MS_REMOUNT #:update-mtab? #f)))
+       #~(begin
+	   (use-modules (guix build syscalls))
+	   (mount #f "/run" #f MS_REMOUNT #:update-mtab? #f))))
       
      (service
       special-files-service-type
