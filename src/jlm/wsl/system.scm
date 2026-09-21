@@ -16,10 +16,6 @@
   (record-modifier (@@ (gnu system file-systems) <file-system>)
 		   'mount-may-fail?))
 
-;; (define set-mount
-;;   (record-modifier (@@ (gnu system file-systems) <file-system>)
-;; 		   'mount?))
-
 (define (relevant-module? name)
   (match name
     (('guix _ ...) #t)
