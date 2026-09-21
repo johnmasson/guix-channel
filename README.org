@@ -1,0 +1,5 @@
+* Guix Channel
+
+This contains a Guix package which helps to support running Guix
+System on WSL2. At the moment, it is partial and undocumented. I
+cannot recommend that anyone else use this right now.
