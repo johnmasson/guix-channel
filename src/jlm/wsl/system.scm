@@ -104,10 +104,9 @@
      (simple-service
       'remount-run 
       boot-service-type
-      (list
-       (with-imported-modules
-	'((guix build syscalls))
-	#~(mount #f "/run" #f MS_REMOUNT #:update-mtab? #f))))
+      (with-imported-modules
+       '((guix build syscalls))
+       #~(mount #f "/run" #f MS_REMOUNT #:update-mtab? #f)))
       
      (service
       special-files-service-type
