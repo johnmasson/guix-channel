@@ -1,8 +1,7 @@
-(use-modules
- (shepherd comm)
- (ice-9 match)
- (ice-9 pretty-print)
- (ice-9 regex))
+(define-module (jlm wsl services)
+  #:use-module (shepherd comm)
+  #:use-module (ice-9 match)
+  #:use-module (ice-9 regex))
 
 (define (service-prop name svc)
   (cadr (assoc name (cdr svc))))
@@ -62,13 +61,13 @@
 		      ('messages messages))
 	      (car result)))))))
 
-(define (power-off)
+(define-public (power-off)
   (let ((con (open-connection))
 	(cmd (shepherd-command 'power-off 'root)))
     (if con
 	(write-command cmd con))))
 
-(define (system-status)
+(define-public (system-status)
   (if (not (file-exists? "/var/run/shepherd/socket"))
       'wait
       (let ((services (query-services)))
@@ -78,8 +77,7 @@
 	      (services-status services))
 	    'wait))))
 
-
-(define (systemctl-main args)
+(define-public (systemctl-main args)
   ;;  (pretty-print args)
   (if (null? (cdr args))
       (begin
@@ -117,5 +115,3 @@
 	(_
 	 (format #t "command not supported\n")
 	 (exit #f)))))
-
-(systemctl-main (command-line))

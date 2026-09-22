@@ -1,0 +1,28 @@
+#+title: Guix on WSL
+* Install / setup process
+** Package build
+
+The initial system image tarball needs to contain the following
+- A minimal set of files required by WSL to be recognisable as a distro, including
+  - wsl.conf
+  - wsl-distribution.conf
+  - /bin. /etc, /root. /home, /var/tmp directories
+- Minimal set of shell utils to install the rest of the system (i.e. busybox)
+- guix binary distribution
+- local checkout of this channel
+
+OOBE script (configured in wsl-distribution.conf) needs to do the following
+- Set root's profile to the one in the guix distro
+- Start the guix daemon
+- authorize substitutes
+- guix pull? 
+- install these packages (install from local checkout with
+  ~guix package -p /run/current-system/profile -L src -e '(@ (jlm packages) wsl)'~)
+- generate an os configuration and channels file
+- guix system reconfigure
+- shutdown the system
+
+At this point, should be able to do wsl -d Guix from windows and end
+up in a fully functional Guix System instance as a non-root user.
+
+

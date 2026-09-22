@@ -1,4 +1,5 @@
 (define-module (jlm wsl conf)
+  #:use-module (gnu services)
   #:use-module (gnu services configuration)
   #:use-module (guix gexp)
   #:export (wsl-conf
@@ -8,7 +9,8 @@
 	    wsl-user
 	    wsl-user-fields
 	    wsl-automount
-	    wsl-automount-fields))
+	    wsl-automount-fields
+	    wsl-conf-service-type))
 
 (define (section-serializer section-fields)
   (lambda (name values)
@@ -29,13 +31,13 @@
 
 ;; Define some of /etc/wsl.conf
 (define-configuration wsl-boot
-  (command string-or-gexp "Command to run on starting up the distro"
-	   (serializer serialize-quoted-string))
-  (systemd (boolean #f) "Whether to boot into systemd"
+  ;; (command string-or-gexp "Command to run on starting up the distro"
+  ;; 	   (serializer serialize-quoted-string))
+  (systemd (boolean #t) "Whether to boot into systemd"
 	   (serializer serialize-boolean)))
 
 (define-configuration wsl-user
-  (default string "Username of default user"
+  (default (string "root") "Username of default user"
     (serializer serialize-unquoted-string)))
 
 (define-configuration wsl-automount
@@ -43,10 +45,26 @@
 	      (serializer serialize-boolean)))
 
 (define-configuration wsl-conf
-  (boot wsl-boot "Boot settings"
+  (boot (wsl-boot (wsl-boot)) "Boot settings"
 	(serializer (section-serializer wsl-boot-fields)))
-  (user wsl-user "User settings"
+  (user (wsl-user (wsl-user)) "User settings"
 	(serializer (section-serializer wsl-user-fields)))
   (automount (wsl-automount (wsl-automount)) "Automount settings"
 	     (serializer (section-serializer wsl-automount-fields))))
-  
+
+(define (wsl-conf-file conf)
+  (mixed-text-file
+   "wsl.conf"
+   (serialize-configuration conf wsl-conf-fields)))
+
+(define wsl-conf-service-type
+  (service-type
+   (name 'wsl-conf)
+   (description "Create /etc/wsl.conf")
+   (extensions
+    (list (service-extension
+	   etc-service-type
+	   (lambda (conf)
+	     `(("wsl.conf" ,(wsl-conf-file conf)))))))
+   (default-value (wsl-conf))))
+   
