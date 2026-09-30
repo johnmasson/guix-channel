@@ -75,5 +75,5 @@
 	(not (equal? (service-extension-target ext) file-system-service-type)))
       (service-type-extensions elogind-service-type))
      (list (service-extension file-system-service-type
-			      (list (car %elogind-file-systems)
-				    (cadr %elogind-file-systems))))))))
+			      (const (list (car %elogind-file-systems)
+					   (cadr %elogind-file-systems)))))))))
