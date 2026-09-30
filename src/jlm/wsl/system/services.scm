@@ -1,6 +1,8 @@
 (define-module (jlm wsl system services)
   #:use-module (gnu services)
   #:use-module (gnu services base)
+  #:use-module (gnu services desktop)
+  #:use-module (gnu system file-systems)
   #:use-module (gnu home services)
   #:use-module (guix build syscalls)
   #:use-module (guix gexp))
@@ -57,4 +59,21 @@
     (list (service-extension home-run-on-first-login-service-type wsl-user-session-service)))
    (default-value '())
    (description "Adds per-user setup code for WSL sessions")))
-	 
+
+
+;; redefine this to remove the /sys/fs/cgroup and
+;; /sys/fs/cgroup/elogind fs mounts which are incompatible with the
+;; way WSL sets up cgroups, and in any case unnecessary on a cgroups2
+;; system.
+(define-public wsl-elogind-service-type
+  (service-type
+   (inherit elogind-service-type)
+   (extensions
+    (append
+     (filter
+      (lambda (ext)
+	(not (equal? (service-extension-target ext) file-system-service-type)))
+      (service-type-extensions elogind-service-type))
+     (list (service-extension file-system-service-type
+			      (list (car %elogind-file-systems)
+				    (cadr %elogind-file-systems))))))))

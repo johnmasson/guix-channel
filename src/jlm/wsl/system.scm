@@ -26,6 +26,13 @@
 		     'mount-may-fail?))
   (set-mount-may-fail! (car %control-groups) #t))
 
+(define-public (remove-cgroups-fs)
+  ;; more drastic solution, required for WSL v3 compatibility: remove
+  ;; both %control-groups and /sys/fs/cgroup/elogind mounts from
+  ;; %elogind-file-systems. Note that elogind actually works just fine
+  ;; without /sys/fs/cgroup/elogind in any case.
+  (list-cdr-set! %elogind-file-systems 1 '()))
+
 (define-public wsl-operating-system
   (operating-system
    ;; inherit the definition from (gnu system images wsl2) to get a
@@ -70,21 +77,11 @@
      (service syslog-service-type)
      ;; elogind and login are required for user shepherd
      ;; instances to run properly
-     (service elogind-service-type)
+     (service wsl-elogind-service-type)
      (service login-service-type)
 
      ;; qv
      (service wsl-boot-service-type)
-     
-     ;; WSL mounts /run with nosuid set, which breaks /run/privileged
-     ;; (simple-service
-     ;;  'remount-run 
-     ;;  boot-service-type
-     ;;  (with-imported-modules
-     ;;   '((guix build syscalls))
-     ;;   #~(begin
-     ;; 	   (use-modules (guix build syscalls))
-     ;; 	   (mount #f "/run" #f MS_REMOUNT #:update-mtab? #f))))
       
      (service
       special-files-service-type

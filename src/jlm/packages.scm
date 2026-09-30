@@ -41,8 +41,7 @@
 		   (let ((bin (string-append #$output "/share/wsl-utils/scripts")))
 		     (for-each
 		      (lambda (script) (install-file script bin))
-		      (find-files "scripts"))))))
-     ))
+		      (find-files "scripts"))))))))
    (native-inputs (list guile-3.0-latest))
    (inputs (list guix shepherd guile-readline))))
 
