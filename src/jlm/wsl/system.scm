@@ -14,25 +14,6 @@
   #:use-module (jlm wsl system services)
   #:use-module (guix gexp))
 
-;; must call this in reconfigure script. There has to be a better way
-;; to handle this - any configure-time hook?
-(define-public (fix-control-groups-fs)
-  ;; similar to root fs issue below: os refuses to configure unless
-  ;; %control-groups fs is present, and marked `mount? #t`, so the
-  ;; only way to make this work is to try the mount and allow it to
-  ;; fail
-  (define set-mount-may-fail!
-    (record-modifier (@@ (gnu system file-systems) <file-system>)
-		     'mount-may-fail?))
-  (set-mount-may-fail! (car %control-groups) #t))
-
-(define-public (remove-cgroups-fs)
-  ;; more drastic solution, required for WSL v3 compatibility: remove
-  ;; both %control-groups and /sys/fs/cgroup/elogind mounts from
-  ;; %elogind-file-systems. Note that elogind actually works just fine
-  ;; without /sys/fs/cgroup/elogind in any case.
-  (list-cdr-set! %elogind-file-systems 1 '()))
-
 (define-public wsl-operating-system
   (operating-system
    ;; inherit the definition from (gnu system images wsl2) to get a
@@ -42,11 +23,6 @@
    ;; packages required for special-files below
    (packages (cons* tzdata wsl-utils %base-packages))
    
-   ;; set these in the actual os definition
-   ;; (host-name "guix")
-   ;; (keyboard-layout (keyboard-layout "us" "altgr-intl"))
-   ;; (timezone "Europe/London")
-
    (essential-services
     (modify-services
      (operating-system-default-essential-services this-operating-system)

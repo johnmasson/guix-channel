@@ -60,7 +60,6 @@
    (default-value '())
    (description "Adds per-user setup code for WSL sessions")))
 
-
 ;; redefine this to remove the /sys/fs/cgroup and
 ;; /sys/fs/cgroup/elogind fs mounts which are incompatible with the
 ;; way WSL sets up cgroups, and in any case unnecessary on a cgroups2
@@ -74,6 +73,8 @@
       (lambda (ext)
 	(not (equal? (service-extension-target ext) file-system-service-type)))
       (service-type-extensions elogind-service-type))
-     (list (service-extension file-system-service-type
-			      (const (list (car %elogind-file-systems)
-					   (cadr %elogind-file-systems)))))))))
+     (list (service-extension
+	    file-system-service-type
+	    (filter (lambda (fs)
+		      (not (string-prefix? "/sys/fs/cgroup" (file-system-mount-point fs))))
+		    %elogind-file-systems)))))))
