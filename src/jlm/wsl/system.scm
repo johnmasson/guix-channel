@@ -18,7 +18,7 @@
   (operating-system
    ;; inherit the definition from (gnu system images wsl2) to get a
    ;; dummy kernel, bootloader etc.
-   (inherit wsl-os)
+   (inherit (make-wsl-os))
 
    ;; packages required for special-files below
    (packages (cons* tzdata wsl-utils %base-packages))
