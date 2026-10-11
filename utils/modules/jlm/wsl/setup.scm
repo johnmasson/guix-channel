@@ -6,12 +6,12 @@
 (define (current-system-template hostname timezone username realname)
   `((define-module (current-system)
       #:use-module (gnu system)
+      #:use-module (gnu system shadow)
+      #:use-module (gnu services)
       #:use-module (jlm wsl system)
       #:use-module (jlm wsl conf)
       #:use-module (guix gexp)
       #:use-module (gnu packages bash))
-
-    (fix-control-groups-fs)
 
     (define-public current-operating-system
       (operating-system

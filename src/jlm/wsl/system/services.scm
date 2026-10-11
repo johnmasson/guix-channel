@@ -75,6 +75,6 @@
       (service-type-extensions elogind-service-type))
      (list (service-extension
 	    file-system-service-type
-	    (filter (lambda (fs)
-		      (not (string-prefix? "/sys/fs/cgroup" (file-system-mount-point fs))))
-		    %elogind-file-systems)))))))
+	    (lambda (_) (filter (lambda (fs)
+				  (not (string-prefix? "/sys/fs/cgroup" (file-system-mount-point fs))))
+				%elogind-file-systems))))))))
