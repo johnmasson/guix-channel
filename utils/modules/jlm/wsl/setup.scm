@@ -61,4 +61,4 @@
 	   (current-system-template hostname timezone username realname)))))))
 
 (define-public (generate-system-file file-name)
-  (interactive-generate-system (open-file file-name)))
+  (interactive-generate-system (open-file file-name "w")))
