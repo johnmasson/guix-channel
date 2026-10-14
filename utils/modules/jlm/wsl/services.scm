@@ -62,7 +62,7 @@
 	      (car result)))))))
 
 (define-public (power-off)
-  (let ((con (open-connection))
+  (let ((con (try-open-connection))
 	(cmd (shepherd-command 'power-off 'root)))
     (if con
 	(write-command cmd con))))
